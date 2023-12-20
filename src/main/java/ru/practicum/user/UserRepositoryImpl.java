@@ -7,16 +7,14 @@ import ru.practicum.exception.UserAlreadyExistException;
 import ru.practicum.exception.UserNotFoundException;
 import ru.practicum.user.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
     private final Map<Long, User> users = new HashMap<>();
+    private final Set<String> emails = new HashSet<>();
 
     protected long idGeneratorForUser = 0L;
 
@@ -31,13 +29,12 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User createUser(User user) {
-        for (User userCheck : users.values()) {
-            if (user.getEmail().equals(userCheck.getEmail())) {
-                throw new UserAlreadyExistException("Пользователь с таким email " + user.getEmail() +
-                        " уже существует");
-            }
+        if (emails.contains(user.getEmail())) {
+            throw new UserAlreadyExistException("Пользователь с таким email " + user.getEmail() +
+                    " уже существует");
         }
         user.setId(generateIdForUser());
+        emails.add(user.getEmail());
         if (!users.containsKey(user.getId())) {
             users.put(user.getId(), user);
             log.debug("Создан новый пользователь с электронной почтой " + user.getEmail());
@@ -51,14 +48,15 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User updateUser(User user) {
-        for (User userCheck : users.values()) {
-            if (user.getEmail().equals(userCheck.getEmail()) && user.getId() != userCheck.getId()) {
-                throw new UserAlreadyExistException("Указанная электронная почта " + user.getEmail() +
-                        " принадлежит другому пользователю");
-            }
+        String checkEmail = users.get(user.getId()).getEmail();
+        if (emails.contains(user.getEmail()) && !checkEmail.equals(user.getEmail())) {
+            throw new UserAlreadyExistException("Указанная электронная почта " + user.getEmail() +
+                    " принадлежит другому пользователю");
         }
         if (users.containsKey(user.getId())) {
+            emails.remove(users.get(user.getId()).getEmail()); //удаляем старый емайл
             users.put(user.getId(), user);
+            emails.add(users.get(user.getId()).getEmail()); //записываем новый емайл
             log.debug("Обновлены данные пользователя с электронной почтой " + user.getEmail());
         } else {
             log.debug("Невозможно обновить данные, пользователь с id " + user.getId()
@@ -71,6 +69,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void deleteUser(long id) {
+        emails.remove(getUserById(id).getEmail());
         users.remove(id);
     }
 

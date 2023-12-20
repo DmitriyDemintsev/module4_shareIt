@@ -16,7 +16,8 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class ItemRepositoryImpl implements ItemRepository {
-    private final Map<Long, List<Item>> items = new HashMap<>(); //id пользователя, которому принадлежит вещь
+    private final Map<Long, List<Item>> userItems = new HashMap<>(); //id пользователя, которому принадлежит вещь
+    private final Map<Long, Item> items = new HashMap<>();
 
     protected long idGeneratorForItem = 0L;
 
@@ -26,15 +27,15 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public List<Item> findItemsByUserId(long userId) {
-        if (!items.containsKey(userId)) {
+        if (!userItems.containsKey(userId)) {
             throw new ItemNotFoundException("Не удается выполнит запрос, вещи пользователя не найдены");
         }
-        return items.get(userId);
+        return userItems.get(userId);
     }
 
     @Override
     public List<Item> findAllItems() {
-        return new ArrayList<>(items.values().stream()
+        return new ArrayList<>(userItems.values().stream()
                 .flatMap(list -> list.stream())
                 .collect(Collectors.toList()));
     }
@@ -45,7 +46,8 @@ public class ItemRepositoryImpl implements ItemRepository {
             throw new UserNotFoundException("Пользователь не найден");
         }
         item.setId(generateIdForItem());
-        items.compute(item.getUserId(), (userId, itemList) -> {
+        items.put(item.getId(), item);
+        userItems.compute(item.getUserId(), (userId, itemList) -> {
             if (itemList == null) {
                 itemList = new ArrayList<>();
             }
@@ -68,6 +70,7 @@ public class ItemRepositoryImpl implements ItemRepository {
             itemCheck.setAvailable(item.getAvailable());
             itemCheck.setDescription(item.getDescription());
             itemCheck.setName(item.getName());
+            items.put(item.getId(), item);
 
             return itemCheck;
         }
@@ -78,17 +81,17 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public void deleteByItemId(long itemId) {
         items.remove(itemId);
+        userItems.remove(itemId);
     }
 
     @Override
     public Item getItemById(long id) {
-        for (List<Item> itemList : items.values()) {
-            for (Item item : itemList) {
-                if (item.getId() == id) {
-                    return item;
-                }
+        for (Long key : items.keySet()) {
+            if (key == id) {
+                return items.get(id);
             }
         }
+
         throw new ItemNotFoundException("Объект с таким id " + id + " не найден");
     }
 
@@ -106,4 +109,3 @@ public class ItemRepositoryImpl implements ItemRepository {
         return itemsBySearch;
     }
 }
-
