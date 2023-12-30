@@ -1,16 +1,20 @@
 package ru.practicum.user;
 
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.model.User;
 
 import java.util.List;
 
+@Transactional(readOnly = true)
 interface UserService {
-    List<User> getAllUsers();
+    List<UserDto> getAllUsers();
 
-    User createUser(User user);
+    @Transactional
+    UserDto saveUser(UserDto userDto);
 
-    User updateUser(User user);
 
+    @Transactional
     void deleteUser(long id);
 
     User getUserById(long id);

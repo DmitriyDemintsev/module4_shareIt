@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Data
 public class ItemRequest {
     private Long id;
-    private String description;
-    private User requestor;
-    private LocalDateTime created;
+    private String description; //описание для запрашиваемой вещи
+    private User requestor; //автор запроса
+    private LocalDateTime created; //дата и время создания запроса
 }
