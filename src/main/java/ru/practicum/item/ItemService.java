@@ -1,7 +1,6 @@
 package ru.practicum.item;
 
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.item.dto.ItemDto;
 import ru.practicum.item.model.Item;
 
 import java.util.List;
@@ -9,10 +8,13 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface ItemService {
 
-    List<ItemDto> getItems(long userId);
+    List<Item> getItems(long userId);
 
     @Transactional
-    ItemDto addNewItem(long userId, ItemDto itemDto);
+    Item create(Long userId, Item item);
+
+    @Transactional
+    Item update(Long userId, Item item);
 
     @Transactional
     void deleteItem(long itemId);

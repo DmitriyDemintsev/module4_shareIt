@@ -3,8 +3,8 @@ package ru.practicum.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.user.dto.UserDto;
-import ru.practicum.user.dto.UserMapper;
+import ru.practicum.exception.UserNotFoundException;
+import ru.practicum.exception.UserValidationException;
 import ru.practicum.user.model.User;
 
 import java.util.List;
@@ -16,16 +16,41 @@ class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public List<UserDto> getAllUsers() {
+    public List<User> getAllUsers() {
         List<User> users = userRepository.findAll();
-        return UserMapper.toUserDtoList(users);
+        return users;
     }
 
-    @Transactional
     @Override
-    public UserDto saveUser(UserDto userDto) {
-        User user = userRepository.save(UserMapper.toUser(userDto));
-        return UserMapper.toUserDto(user);
+    @Transactional
+    public User create(User user) {
+        if (user.getName() == null || user.getName().isEmpty()) {
+            throw new UserValidationException("Отсутствует имя пользователя / логин");
+        }
+        if (user.getEmail() == null || user.getEmail().isEmpty()) {
+            throw new UserValidationException("Не указан email");
+        }
+        user = userRepository.save(user);
+        return user;
+    }
+
+    @Override
+    public User update(User user) {
+        User old = userRepository.findById(user.getId())
+                .orElseThrow(() -> new UserNotFoundException("user не найден"));
+        if (user.getName() == null) {
+            user.setName(old.getName());
+        }
+        if (user.getEmail() == null) {
+            user.setEmail(old.getEmail());
+        }
+        if (user.getName().isEmpty()) {
+            throw new UserValidationException("Отсутствует имя/логин пользователя");
+        }
+        if (user.getEmail().isEmpty()) {
+            throw new UserValidationException("Отсутствует email");
+        }
+        return userRepository.save(user);
     }
 
     @Override
@@ -35,6 +60,7 @@ class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(long id) {
-        return userRepository.getById(id);
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("user не найден"));
     }
 }

@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
@@ -13,8 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class UserDto implements Serializable {
     private Long id;
-//    @NotNull
-//    @Email(message = "некорректный email")
-    private String email;
     private String name;
+    @Email(message = "некорректный email")
+    private String email;
 }

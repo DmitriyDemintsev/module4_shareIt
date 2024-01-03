@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import ru.practicum.user.model.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
@@ -17,14 +16,14 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; //идентификатор вещи
-    @NotBlank
+    @Column(nullable = false)
     private String name; //название вещи
-    @NotBlank
+    @Column(nullable = false)
     private String description; //описание вещи
     private Boolean available; //доступность вещи для аренды
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "owner_id")
     private User owner; //владелец вещи (тот, кто создал её)
-    private Long request; //ссылка на запрос user'а, для которого была создана вещь
-
+//    @OneToMany(fetch = FetchType.LAZY)
+//    private Long request; //ссылка на запрос user'а, для которого была создана вещь
 }
