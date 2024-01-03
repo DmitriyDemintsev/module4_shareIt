@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.booking.BookingRepository;
 import ru.practicum.exception.ItemAlreadyExistException;
 import ru.practicum.exception.ItemNotFoundException;
 import ru.practicum.exception.ItemValidationException;

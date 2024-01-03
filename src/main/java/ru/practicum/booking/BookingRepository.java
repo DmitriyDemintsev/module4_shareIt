@@ -57,5 +57,4 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("select b from Booking b join b.item as i " +
             "where i.owner = ?1 and b.start < ?2 and b.end > ?3")
     List<Booking> findCurrentBookings(User booker, LocalDateTime start, LocalDateTime end, Sort sort); //текущие заказы
-
 }

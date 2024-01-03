@@ -3,8 +3,6 @@ package ru.practicum.booking.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.practicum.booking.BookingStatus;
-import ru.practicum.item.model.Item;
-import ru.practicum.user.model.User;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -17,5 +15,4 @@ public class BookingCreateDto implements Serializable {
     private LocalDateTime end; //дата и время окончания бронирования
     private Long itemId; //что бронируют
     private BookingStatus status; //статус бронирования
-
 }
