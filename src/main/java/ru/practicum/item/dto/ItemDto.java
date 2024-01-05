@@ -3,7 +3,6 @@ package ru.practicum.item.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.practicum.booking.dto.BookingDto;
-import ru.practicum.item.model.Comment;
 import java.io.Serializable;
 import java.util.List;
 
@@ -18,5 +17,4 @@ public class ItemDto implements Serializable {
     private BookingDto nextBooking;
     private BookingDto lastBooking;
     private List<CommentDto> comments;
-//    private Long request; //ссылка на запрос user'а, для которого была создана вещь
 }

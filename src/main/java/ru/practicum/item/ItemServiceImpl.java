@@ -65,9 +65,6 @@ public class ItemServiceImpl implements ItemService {
         if (item.getOwner() == null) {
             item.setOwner(old.getOwner());
         }
-//        if (item.getRequest() == null) {
-//            item.setRequest(old.getRequest());
-//        }
         if (item.getName().isEmpty()) {
             throw new ItemValidationException("Отсутствует назание для item");
         }

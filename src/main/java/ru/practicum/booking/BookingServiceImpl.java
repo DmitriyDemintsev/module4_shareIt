@@ -101,25 +101,19 @@ public class BookingServiceImpl implements BookingService {
         Sort sortByStartDesc = Sort.by(Sort.Direction.DESC, "start");
         Sort sortByStartAsc = Sort.by(Sort.Direction.ASC, "start");
         LocalDateTime now = LocalDateTime.now();
-        if (state == BookingStatusForFilter.ALL) {
-            return bookingRepository.findByBooker(user, sortByStartDesc);
-        }
-        if (state == BookingStatusForFilter.FUTURE) {
-            return bookingRepository.findByBookerAndStartIsAfter(user, now, sortByStartDesc);
-        }
-        if (state == BookingStatusForFilter.PAST) {
-            return bookingRepository.findByBookerAndEndIsBefore(user, now, sortByStartDesc);
-        }
-        if (state == BookingStatusForFilter.CURRENT) {
-            return bookingRepository.findByBookerAndStartIsBeforeAndEndIsAfter(user, now, now, sortByStartAsc);
-        }
-        if (state == BookingStatusForFilter.WAITING) {
-            return bookingRepository.findByBookerAndStatus(user, BookingStatus.valueOf(state.name()),
-                    sortByStartDesc);
-        }
-        if (state == BookingStatusForFilter.REJECTED) {
-            return bookingRepository.findByBookerAndStatus(user, BookingStatus.valueOf(state.name()),
-                    sortByStartDesc);
+        switch (state) {
+            case ALL:
+                return bookingRepository.findByBooker(user, sortByStartDesc);
+            case FUTURE:
+                return bookingRepository.findByBookerAndStartIsAfter(user, now, sortByStartDesc);
+            case PAST:
+                return bookingRepository.findByBookerAndEndIsBefore(user, now, sortByStartDesc);
+            case CURRENT:
+                return bookingRepository.findByBookerAndStartIsBeforeAndEndIsAfter(user, now, now, sortByStartAsc);
+            case WAITING:
+            case REJECTED:
+                return bookingRepository.findByBookerAndStatus(user, BookingStatus.valueOf(state.name()), sortByStartDesc);
+            default:
         }
         return bookingRepository.findByBookerAndStatus(user, BookingStatus.valueOf(state.name()), sortByStartDesc);
     }
@@ -131,25 +125,20 @@ public class BookingServiceImpl implements BookingService {
         Sort sortByStartDesc = Sort.by(Sort.Direction.DESC, "start");
         Sort sortByStartAsc = Sort.by(Sort.Direction.ASC, "start");
         LocalDateTime now = LocalDateTime.now();
-        if (state == BookingStatusForFilter.ALL) {
-            return bookingRepository.getBookingsAllItemsForUserWitchStatus(user, sortByStartDesc);
-        }
-        if (state == BookingStatusForFilter.FUTURE) {
-            return bookingRepository.findFutureBookings(user, now, sortByStartDesc);
-        }
-        if (state == BookingStatusForFilter.PAST) {
-            return bookingRepository.findCompletedBookings(user, now, sortByStartDesc);
-        }
-        if (state == BookingStatusForFilter.CURRENT) {
-            return bookingRepository.findCurrentBookings(user, now, now, sortByStartAsc);
-        }
-        if (state == BookingStatusForFilter.WAITING) {
-            return bookingRepository.getBookingsAllItemsForUserWitchStatus(user, BookingStatus.valueOf(state.name()),
-                    sortByStartDesc);
-        }
-        if (state == BookingStatusForFilter.REJECTED) {
-            return bookingRepository.getBookingsAllItemsForUserWitchStatus(user, BookingStatus.valueOf(state.name()),
-                    sortByStartDesc);
+        switch (state) {
+            case ALL:
+                return bookingRepository.getBookingsAllItemsForUserWitchStatus(user, sortByStartDesc);
+            case FUTURE:
+                return bookingRepository.findFutureBookings(user, now, sortByStartDesc);
+            case PAST:
+                return bookingRepository.findCompletedBookings(user, now, sortByStartDesc);
+            case CURRENT:
+                return bookingRepository.findCurrentBookings(user, now, now, sortByStartAsc);
+            case WAITING:
+            case REJECTED:
+                return bookingRepository.getBookingsAllItemsForUserWitchStatus(user, BookingStatus.valueOf(state.name()),
+                        sortByStartDesc);
+            default:
         }
         return bookingRepository.getBookingsAllItemsForUserWitchStatus(user, BookingStatus.valueOf(state.name()),
                 sortByStartDesc);

@@ -24,6 +24,4 @@ public class Item {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     private User owner; //владелец вещи (тот, кто создал её)
-//    @OneToMany(fetch = FetchType.LAZY)
-//    private Long request; //ссылка на запрос user'а, для которого была создана вещь
 }

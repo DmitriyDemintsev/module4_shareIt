@@ -18,7 +18,6 @@ public class ItemMapper {
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
                 null
-//                itemDto.getRequest()
         );
         return item;
     }
@@ -33,7 +32,6 @@ public class ItemMapper {
                 null,
                 null,
                 null
-//                item.getRequest()
         );
     }
 
