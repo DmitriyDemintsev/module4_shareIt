@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.booking.BookingRepository;
 import ru.practicum.exception.BookingValidationException;
+import ru.practicum.exception.CommentValidationException;
 import ru.practicum.exception.ItemValidationException;
 import ru.practicum.exception.UserValidationException;
 import ru.practicum.item.model.Comment;
@@ -38,7 +39,7 @@ public class CommentServiceImpl implements CommentService {
             throw new BookingValidationException("Нет завершенных заказов");
         }
         if (comment.getText() == null || comment.getText().isEmpty()) {
-            throw new BookingValidationException("Комментарий не может быть пустым");
+            throw new CommentValidationException("Комментарий не может быть пустым");
         }
         return commentRepository.save(comment);
     }

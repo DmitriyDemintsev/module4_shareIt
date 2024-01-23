@@ -38,6 +38,18 @@ public class HandlerException {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST) //ошибка 400
+    public ErrorResponse handleItemRequestValidationException(final ItemRequestValidationException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST) //ошибка 400
+    public ErrorResponse handleCommentValidationException(final CommentValidationException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND) //ошибка 404
     public ErrorResponse handleUserNotFoundException(final UserNotFoundException e) {
         return new ErrorResponse(e.getMessage());
@@ -52,6 +64,12 @@ public class HandlerException {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND) //ошибка 404
     public ErrorResponse handleBookingNotFoundException(final BookingNotFoundException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND) //ошибка 404
+    public ErrorResponse handleItemRequestNotFoundException(final ItemRequestNotFoundException e) {
         return new ErrorResponse(e.getMessage());
     }
 

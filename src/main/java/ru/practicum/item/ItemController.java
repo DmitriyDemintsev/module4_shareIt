@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.booking.BookingService;
 import ru.practicum.booking.dto.BookingMapper;
 import ru.practicum.booking.model.Booking;
+import ru.practicum.exception.ItemRequestValidationException;
 import ru.practicum.item.dto.CommentMapper;
 import ru.practicum.item.dto.ItemDto;
 import ru.practicum.item.dto.ItemMapper;
@@ -27,8 +28,16 @@ public class ItemController {
     private final BookingMapper bookingMapper;
 
     @GetMapping
-    public List<ItemDto> get(@RequestHeader("X-Sharer-User-Id") long userId) {
-        List<ItemDto> itemDtos = itemMapper.toItemDtoList(itemService.getItems(userId));
+    public List<ItemDto> getItems(@RequestHeader("X-Sharer-User-Id") long userId,
+                                  @RequestParam(value = "from", defaultValue = "0") int from,
+                                  @RequestParam(value = "size", defaultValue = "10") int size) {
+        if (from < 0) {
+            throw new ItemRequestValidationException("Индекс не может быть отрицательным числом");
+        }
+        if (size == 0) {
+            throw new ItemRequestValidationException("размер не может быть нулём");
+        }
+        List<ItemDto> itemDtos = itemMapper.toItemDtoList(itemService.getItems(userId, from, size));
         for (ItemDto itemDto : itemDtos) {
             addComment(itemDto);
             if (itemDto.getOwner().equals(userId)) {
@@ -50,19 +59,29 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> getSearchItem(@RequestParam("text") String query) {
-        return itemMapper.toItemDtoList(itemService.getItemsBySearch(query));
+    public List<ItemDto> getSearchItem(@RequestParam("text") String query,
+                                       @RequestParam(value = "from", defaultValue = "0") int from,
+                                       @RequestParam(value = "size", defaultValue = "10") int size) {
+        if (from < 0) {
+            throw new ItemRequestValidationException("Индекс не может быть отрицательным числом");
+        }
+        if (size == 0) {
+            throw new ItemRequestValidationException("Размер не может быть нулём");
+        }
+        return itemMapper.toItemDtoList(itemService.getItemsBySearch(query, from, size));
     }
 
     @PostMapping
     public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") Long userId,
                               @Valid @RequestBody ItemDto itemDto) {
-        return itemMapper.toItemDto(itemService.create(userId, itemMapper.toItem(itemDto, null)));
+        return itemMapper.toItemDto(itemService.create(userId, itemDto.getRequestId(),
+                itemMapper.toItem(itemDto, null)));
     }
 
     @PatchMapping("/{id}")
     public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                              @Valid @RequestBody ItemDto itemDto, @PathVariable("id") long id) {
+                              @Valid @RequestBody ItemDto itemDto,
+                              @PathVariable("id") long id) {
         return itemMapper.toItemDto(itemService.update(userId, itemMapper.toItem(itemDto, id)));
     }
 
@@ -73,7 +92,7 @@ public class ItemController {
 
     private void addComment(ItemDto itemDto) {
         List<Comment> comments = commentService.getComments(itemDto.getId());
-        itemDto.setComments(commentMapper.totoItemDtoListList(comments));
+        itemDto.setComments(commentMapper.toItemDtoListList(comments));
     }
 
     private void addBookings(ItemDto itemDto) {

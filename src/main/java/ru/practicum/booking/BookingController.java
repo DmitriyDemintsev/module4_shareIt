@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.booking.dto.BookingCreateDto;
 import ru.practicum.booking.dto.BookingDto;
 import ru.practicum.booking.dto.BookingMapper;
+import ru.practicum.exception.BookingValidationException;
+import ru.practicum.exception.ItemRequestValidationException;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -30,25 +32,46 @@ public class BookingController {
 
     @PatchMapping("/{id}")
     public BookingDto updateBooking(@RequestHeader("X-Sharer-User-Id") long userId,
-                                    @PathVariable("id") long id, @RequestParam("approved") boolean approved) {
+                                    @PathVariable("id") long id,
+                                    @RequestParam("approved") boolean approved) {
         return bookingMapper.toBookingDto(bookingService.update(id, approved, userId));
     }
 
     @GetMapping("/{id}")
-    public BookingDto getBookingDtoById(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long id) {
+    public BookingDto getBookingDtoById(@RequestHeader("X-Sharer-User-Id") long userId,
+                                        @PathVariable long id) {
         return bookingMapper.toBookingDto(bookingService.getBookingById(userId, id));
     }
 
     @GetMapping
     public List<BookingDto> getAllBookingsForUser(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                  @RequestParam(value = "state", defaultValue = "ALL") String state) {
-        return bookingMapper.toBookingDtoList(bookingService.getAllBookings(userId, bookingMapper.toStatus(state)));
+                                                  @RequestParam(value = "state", defaultValue = "ALL") String state,
+                                                  @RequestParam(value = "from", defaultValue = "0") int from,
+                                                  @RequestParam(value = "size", defaultValue = "10") int size) {
+        if (from < 0) {
+            throw new BookingValidationException("Индекс не может быть отрицательным числом");
+        }
+        if (size == 0) {
+            throw new BookingValidationException("Размер не может быть нулём");
+        }
+        return bookingMapper.toBookingDtoList(bookingService.getAllBookings(userId,
+                bookingMapper.toStatus(state), from, size));
     }
 
     @GetMapping("/owner")
     public List<BookingDto> getBookingsAllItemsForUser(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                       @RequestParam(value = "state", defaultValue = "ALL") String state) {
-        return bookingMapper.toBookingDtoList(bookingService.getBookingsAllItemsForUser(userId, bookingMapper.toStatus(state)));
+                                                       @RequestParam(value = "state", defaultValue = "ALL") String state,
+                                                       @RequestParam(value = "from", defaultValue = "0") int from,
+                                                       @RequestParam(value = "size", defaultValue = "10") int size) {
+        if (from < 0) {
+            throw new BookingValidationException("индекс не может быть отрицательным числом");
+        }
+        if (size == 0) {
+            throw new ItemRequestValidationException("размер не может быть нулём");
+        }
+
+        return bookingMapper.toBookingDtoList(bookingService.getBookingsAllItemsForUser(userId,
+                bookingMapper.toStatus(state), from, size));
     }
 
     @DeleteMapping("/{id}")

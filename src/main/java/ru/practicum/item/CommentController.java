@@ -18,7 +18,8 @@ public class CommentController {
     private final CommentMapper commentMapper;
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto createComment(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable("itemId") long itemId,
+    public CommentDto createComment(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                    @PathVariable("itemId") long itemId,
                                     @Valid @RequestBody CommentCreateDto commentCreateDto) {
         return commentMapper.toCommentDto(commentService.create(userId, itemId,
                 commentMapper.toComment(commentCreateDto, null)));

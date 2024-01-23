@@ -1,6 +1,8 @@
 package ru.practicum.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,7 +89,6 @@ public class BookingServiceImpl implements BookingService {
     public Booking getBookingById(long userId, long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException("Бронирование не найдено"));
-
         if (booking.getBooker().getId() != userId && booking.getItem().getOwner().getId() != userId) {
             throw new BookingNotFoundException("Данная операция для вас недоступна");
         }
@@ -95,53 +96,58 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getAllBookings(long userId, BookingStatusForFilter state) {
+    public List<Booking> getAllBookings(long userId, BookingStatusForFilter state, int from, int size) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
         Sort sortByStartDesc = Sort.by(Sort.Direction.DESC, "start");
-        Sort sortByStartAsc = Sort.by(Sort.Direction.ASC, "start");
         LocalDateTime now = LocalDateTime.now();
+        Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size, sortByStartDesc);
         switch (state) {
             case ALL:
-                return bookingRepository.findByBooker(user, sortByStartDesc);
+                return bookingRepository.findByBooker(user, pageable).getContent();
             case FUTURE:
-                return bookingRepository.findByBookerAndStartIsAfter(user, now, sortByStartDesc);
+                return bookingRepository.findByBookerAndStartIsAfter(user, now, pageable).getContent();
             case PAST:
-                return bookingRepository.findByBookerAndEndIsBefore(user, now, sortByStartDesc);
+                return bookingRepository.findByBookerAndEndIsBefore(user, now, pageable).getContent();
             case CURRENT:
-                return bookingRepository.findByBookerAndStartIsBeforeAndEndIsAfter(user, now, now, sortByStartAsc);
+                return bookingRepository.findByBookerAndStartIsBeforeAndEndIsAfter(user, now, now, pageable)
+                        .getContent();
             case WAITING:
             case REJECTED:
-                return bookingRepository.findByBookerAndStatus(user, BookingStatus.valueOf(state.name()), sortByStartDesc);
+                return bookingRepository.findByBookerAndStatus(user, BookingStatus.valueOf(state.name()), pageable)
+                        .getContent();
             default:
         }
-        return bookingRepository.findByBookerAndStatus(user, BookingStatus.valueOf(state.name()), sortByStartDesc);
+        return bookingRepository.findByBookerAndStatus(user, BookingStatus.valueOf(state.name()), pageable)
+                .getContent();
     }
 
     @Override
-    public List<Booking> getBookingsAllItemsForUser(long userId, BookingStatusForFilter state) {
+    public List<Booking> getBookingsAllItemsForUser(long userId, BookingStatusForFilter state, int from, int size) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
         Sort sortByStartDesc = Sort.by(Sort.Direction.DESC, "start");
         Sort sortByStartAsc = Sort.by(Sort.Direction.ASC, "start");
+        Pageable pageableDesc = PageRequest.of(from > 0 ? from / size : 0, size, sortByStartDesc);
+        Pageable pageableAsc = PageRequest.of(from > 0 ? from / size : 0, size, sortByStartAsc);
         LocalDateTime now = LocalDateTime.now();
         switch (state) {
             case ALL:
-                return bookingRepository.getBookingsAllItemsForUserWitchStatus(user, sortByStartDesc);
+                return bookingRepository.getBookingsAllItemsForUser(user, pageableDesc).getContent();
             case FUTURE:
-                return bookingRepository.findFutureBookings(user, now, sortByStartDesc);
+                return bookingRepository.findFutureBookings(user, now, pageableDesc).getContent();
             case PAST:
-                return bookingRepository.findCompletedBookings(user, now, sortByStartDesc);
+                return bookingRepository.findCompletedBookings(user, now, pageableDesc).getContent();
             case CURRENT:
-                return bookingRepository.findCurrentBookings(user, now, now, sortByStartAsc);
+                return bookingRepository.findCurrentBookings(user, now, now, pageableAsc).getContent();
             case WAITING:
             case REJECTED:
-                return bookingRepository.getBookingsAllItemsForUserWitchStatus(user, BookingStatus.valueOf(state.name()),
-                        sortByStartDesc);
+                return bookingRepository.getBookingsAllItemsForUserWithStatus(user, BookingStatus.valueOf(state.name()),
+                        pageableDesc).getContent();
             default:
         }
-        return bookingRepository.getBookingsAllItemsForUserWitchStatus(user, BookingStatus.valueOf(state.name()),
-                sortByStartDesc);
+        return bookingRepository.getBookingsAllItemsForUserWithStatus(user, BookingStatus.valueOf(state.name()),
+                pageableDesc).getContent();
     }
 
     @Override
@@ -149,7 +155,7 @@ public class BookingServiceImpl implements BookingService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ItemNotFoundException("Данный запрос вам недоступен"));
         Sort sortByEnd = Sort.by(Sort.Direction.DESC, "end").and(Sort.by(Sort.Direction.ASC, "id"));
-        List<Booking> bookings = bookingRepository.findByItemAndEndIsBeforeAndStatus(item, LocalDateTime.now(), BookingStatus.APPROVED, sortByEnd);
+        List<Booking> bookings = bookingRepository.findByItemAndStartIsBeforeAndStatus(item, LocalDateTime.now(), BookingStatus.APPROVED, sortByEnd);
         if (bookings.isEmpty()) {
             return null;
         }

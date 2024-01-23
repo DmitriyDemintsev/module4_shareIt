@@ -1,14 +1,15 @@
 package ru.practicum.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.exception.ItemAlreadyExistException;
-import ru.practicum.exception.ItemNotFoundException;
-import ru.practicum.exception.ItemValidationException;
-import ru.practicum.exception.UserNotFoundException;
+import ru.practicum.exception.*;
 import ru.practicum.item.model.Item;
+import ru.practicum.request.ItemRequestRepository;
+import ru.practicum.request.model.ItemRequest;
 import ru.practicum.user.UserRepository;
 import ru.practicum.user.model.User;
 
@@ -21,6 +22,7 @@ import java.util.List;
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Override
     public List<Item> findAllItems() {
@@ -29,7 +31,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public Item create(Long userId, Item item) {
+    public Item create(Long userId, Long requestId, Item item) {
         if (item.getName() == null || item.getName().isEmpty()) {
             throw new ItemValidationException("Отсутствует название для item");
         }
@@ -41,7 +43,11 @@ public class ItemServiceImpl implements ItemService {
         }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("user не найден"));
-
+        if (requestId != null) {
+            ItemRequest itemRequest = itemRequestRepository.findById(requestId)
+                    .orElseThrow(() -> new ItemRequestNotFoundException("Запрос не найден"));
+            item.setRequest(itemRequest);
+        }
         item.setOwner(user);
         item = itemRepository.save(item);
         return item;
@@ -92,18 +98,26 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> getItems(long id) {
+    public List<Item> getItems(long id, int from, int size) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("user не найден"));
         Sort sortById = Sort.by(Sort.Direction.ASC, "id");
-        return itemRepository.findByOwner(user, sortById);
+        Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size, sortById);
+        return itemRepository.findByOwner(user, pageable).getContent();
     }
 
-    public List<Item> getItemsBySearch(String query) {
+    public List<Item> getItemsBySearch(String query, int from, int size) {
         List<Item> items = new ArrayList<>();
+        Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size);
         if (query.isEmpty()) {
             return items;
         }
-        return itemRepository.findAllBySearch(query);
+        return itemRepository.findAllBySearch(query, pageable).getContent();
+    }
+
+    public List<Item> getByRequest(long requestId) {
+        ItemRequest itemRequest = itemRequestRepository.getItemRequestById(requestId);
+        Sort sortById = Sort.by(Sort.Direction.DESC, "id");
+        return itemRepository.findByRequest(itemRequest, sortById);
     }
 }
