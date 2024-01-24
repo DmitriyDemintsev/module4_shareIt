@@ -99,26 +99,24 @@ public class BookingServiceImpl implements BookingService {
     public List<Booking> getAllBookings(long userId, BookingStatusForFilter state, int from, int size) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
-        Sort sortByStartDesc = Sort.by(Sort.Direction.DESC, "start");
         LocalDateTime now = LocalDateTime.now();
-        Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size, sortByStartDesc);
         switch (state) {
             case ALL:
-                return bookingRepository.findByBooker(user, pageable).getContent();
+                return bookingRepository.findByBooker(user, getPageableDesc(from, size)).getContent();
             case FUTURE:
-                return bookingRepository.findByBookerAndStartIsAfter(user, now, pageable).getContent();
+                return bookingRepository.findByBookerAndStartIsAfter(user, now, getPageableDesc(from, size)).getContent();
             case PAST:
-                return bookingRepository.findByBookerAndEndIsBefore(user, now, pageable).getContent();
+                return bookingRepository.findByBookerAndEndIsBefore(user, now, getPageableDesc(from, size)).getContent();
             case CURRENT:
-                return bookingRepository.findByBookerAndStartIsBeforeAndEndIsAfter(user, now, now, pageable)
+                return bookingRepository.findByBookerAndStartIsBeforeAndEndIsAfter(user, now, now, getPageableDesc(from, size))
                         .getContent();
             case WAITING:
             case REJECTED:
-                return bookingRepository.findByBookerAndStatus(user, BookingStatus.valueOf(state.name()), pageable)
+                return bookingRepository.findByBookerAndStatus(user, BookingStatus.valueOf(state.name()), getPageableDesc(from, size))
                         .getContent();
             default:
         }
-        return bookingRepository.findByBookerAndStatus(user, BookingStatus.valueOf(state.name()), pageable)
+        return bookingRepository.findByBookerAndStatus(user, BookingStatus.valueOf(state.name()), getPageableDesc(from, size))
                 .getContent();
     }
 
@@ -126,28 +124,24 @@ public class BookingServiceImpl implements BookingService {
     public List<Booking> getBookingsAllItemsForUser(long userId, BookingStatusForFilter state, int from, int size) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
-        Sort sortByStartDesc = Sort.by(Sort.Direction.DESC, "start");
-        Sort sortByStartAsc = Sort.by(Sort.Direction.ASC, "start");
-        Pageable pageableDesc = PageRequest.of(from > 0 ? from / size : 0, size, sortByStartDesc);
-        Pageable pageableAsc = PageRequest.of(from > 0 ? from / size : 0, size, sortByStartAsc);
         LocalDateTime now = LocalDateTime.now();
         switch (state) {
             case ALL:
-                return bookingRepository.getBookingsAllItemsForUser(user, pageableDesc).getContent();
+                return bookingRepository.getBookingsAllItemsForUser(user, getPageableDesc(from, size)).getContent();
             case FUTURE:
-                return bookingRepository.findFutureBookings(user, now, pageableDesc).getContent();
+                return bookingRepository.findFutureBookings(user, now, getPageableDesc(from, size)).getContent();
             case PAST:
-                return bookingRepository.findCompletedBookings(user, now, pageableDesc).getContent();
+                return bookingRepository.findCompletedBookings(user, now, getPageableDesc(from, size)).getContent();
             case CURRENT:
-                return bookingRepository.findCurrentBookings(user, now, now, pageableAsc).getContent();
+                return bookingRepository.findCurrentBookings(user, now, now, getPageableAsc(from, size)).getContent();
             case WAITING:
             case REJECTED:
                 return bookingRepository.getBookingsAllItemsForUserWithStatus(user, BookingStatus.valueOf(state.name()),
-                        pageableDesc).getContent();
+                        getPageableDesc(from, size)).getContent();
             default:
         }
         return bookingRepository.getBookingsAllItemsForUserWithStatus(user, BookingStatus.valueOf(state.name()),
-                pageableDesc).getContent();
+                getPageableDesc(from, size)).getContent();
     }
 
     @Override
@@ -172,5 +166,15 @@ public class BookingServiceImpl implements BookingService {
             return null;
         }
         return bookings.get(0);
+    }
+
+    public static Pageable getPageableDesc(int from, int size) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        return PageRequest.of(from > 0 ? from / size : 0, size, sort);
+    }
+
+    public static Pageable getPageableAsc(int from, int size) {
+        Sort sort = Sort.by(Sort.Direction.ASC, "start");
+        return PageRequest.of(from > 0 ? from / size : 0, size, sort);
     }
 }
