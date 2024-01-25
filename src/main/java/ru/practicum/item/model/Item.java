@@ -2,20 +2,30 @@ package ru.practicum.item.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import ru.practicum.request.model.ItemRequest;
+import ru.practicum.user.model.User;
 
-import javax.validation.constraints.NotBlank;
+import javax.persistence.*;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "items")
 public class Item {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; //идентификатор вещи
-    private Long userId; //идентификатор user'а, который создал вещь
-    private String url;
-    @NotBlank
-    private String name;
-    @NotBlank
-    private String description;
+    @Column(nullable = false)
+    private String name; //название вещи
+    @Column(nullable = false)
+    private String description; //описание вещи
     private Boolean available; //доступность вещи для аренды
-    private String owner; //владелец вещи (тот, кто создал её)
-    private Long request; //ссылка на запрос user'а, для которого была создана вещь
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
+    private User owner; //владелец вещи (тот, кто создал её)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "request_id")
+    private ItemRequest request; //ссылка на запрос user'а, для которого была создана вещь == ответ на запрос
 }

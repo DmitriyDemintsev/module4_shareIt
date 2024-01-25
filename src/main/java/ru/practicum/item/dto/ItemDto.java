@@ -2,22 +2,22 @@ package ru.practicum.item.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import lombok.NoArgsConstructor;
+import ru.practicum.booking.dto.BookingDto;
+import java.io.Serializable;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class ItemDto {
+@NoArgsConstructor
+public class ItemDto implements Serializable {
     private Long id; //идентификатор вещи
-    private Long userId; //идентификатор user'а, который создал вещь
-    private String url;
-    @NotBlank
     private String name;
-    @NotBlank
     private String description;
-    @NotNull
     private Boolean available; //доступность вещи для аренды
-    private String owner;
-    private Long request; //ссылка на запрос user'а, для которого была создана вещь
+    private Long owner;
+    private BookingDto nextBooking;
+    private BookingDto lastBooking;
+    private List<CommentDto> comments;
+    private Long requestId;
 }

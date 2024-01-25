@@ -1,6 +1,6 @@
 package ru.practicum.item.dto;
 
-import org.mapstruct.Mapper;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.item.model.Item;
 
@@ -8,57 +8,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@Mapper(componentModel = "spring")
+@NoArgsConstructor
 public class ItemMapper {
-    public Item toItem(ItemDto itemDto) {
+
+    public Item toItem(ItemDto itemDto, Long id) {
         Item item = new Item(
-                itemDto.getId(),
-                itemDto.getUserId(),
-                itemDto.getUrl(),
+                id,
                 itemDto.getName(),
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
-                itemDto.getOwner(),
-                itemDto.getRequest());
-        return item;
-    }
-
-    public Item toItem(ItemCreateDto itemCreateDto, long userId) {
-        Item item = new Item(
                 null,
-                userId,
-                itemCreateDto.getUrl(),
-                itemCreateDto.getName(),
-                itemCreateDto.getDescription(),
-                itemCreateDto.getAvailable(),
-                itemCreateDto.getOwner(),
-                itemCreateDto.getRequest());
-        return item;
-    }
-
-    public Item toItem(ItemUpdateDto itemUpdateDto, long id, long userId) {
-        Item item = new Item(
-                id,
-                userId,
-                itemUpdateDto.getUrl(),
-                itemUpdateDto.getName(),
-                itemUpdateDto.getDescription(),
-                itemUpdateDto.getAvailable(),
-                itemUpdateDto.getOwner(),
-                itemUpdateDto.getRequest());
+                null
+        );
         return item;
     }
 
     public ItemDto toItemDto(Item item) {
         return new ItemDto(
                 item.getId(),
-                item.getUserId(),
-                item.getUrl(),
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable(),
-                item.getOwner(),
-                item.getRequest());
+                item.getOwner().getId(),
+                null,
+                null,
+                null,
+                item.getRequest() != null ? item.getRequest().getId() : null
+        );
     }
 
     public List<ItemDto> toItemDtoList(Iterable<Item> items) {

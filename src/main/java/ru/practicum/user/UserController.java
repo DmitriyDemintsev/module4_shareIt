@@ -3,16 +3,16 @@ package ru.practicum.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.user.dto.UserCreateDto;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.dto.UserMapper;
-import ru.practicum.user.dto.UserUpdateDto;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @Component
+@Validated
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -27,13 +27,14 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto create(@Valid @RequestBody UserCreateDto userCreateDto) {
-        return userMapper.toUserDto(userService.createUser(userMapper.toUser(userCreateDto)));
+    public UserDto createUser(@Valid @RequestBody UserDto userDto) {
+        return userMapper.toUserDto(userService.create(userMapper.toUser(userDto, null)));
     }
 
     @PatchMapping("/{id}")
-    public UserDto update(@Valid @RequestBody UserUpdateDto userUpdateDto, @PathVariable("id") long id) {
-        return userMapper.toUserDto(userService.updateUser(userMapper.toUser(userUpdateDto, id)));
+    public UserDto updateUser(@Valid @RequestBody UserDto userDto,
+                              @PathVariable("id") long id) {
+        return userMapper.toUserDto(userService.update(userMapper.toUser(userDto, id)));
     }
 
     @DeleteMapping("/{id}")
@@ -42,7 +43,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserDto getUserDtoById (@PathVariable long id) {
-            return userMapper.toUserDto(userService.getUserById(id));
+    public UserDto getUserDtoById(@PathVariable long id) {
+        return userMapper.toUserDto(userService.getUserById(id));
     }
 }

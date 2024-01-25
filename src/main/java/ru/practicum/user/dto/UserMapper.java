@@ -1,6 +1,6 @@
 package ru.practicum.user.dto;
 
-import org.mapstruct.Mapper;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.user.model.User;
 
@@ -8,21 +8,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@Mapper(componentModel = "spring")
+@NoArgsConstructor
 public class UserMapper {
-    public User toUser(UserDto userDto) {
+    public User toUser(UserDto userDto, Long id) {
         User user = new User(
-                userDto.getId(),
-                userDto.getEmail(),
-                userDto.getName());
+                id,
+                userDto.getName(),
+                userDto.getEmail());
         return user;
     }
 
     public UserDto toUserDto(User user) {
         UserDto userDto = new UserDto(
                 user.getId(),
-                user.getEmail(),
-                user.getName());
+                user.getName(),
+                user.getEmail());
         return userDto;
     }
 
@@ -32,21 +32,5 @@ public class UserMapper {
             result.add(toUserDto(user));
         }
         return result;
-    }
-
-    public User toUser(UserCreateDto userCreateDto) {
-        User user = new User(
-                null,
-                userCreateDto.getEmail(),
-                userCreateDto.getName());
-        return user;
-    }
-
-    public User toUser(UserUpdateDto userUpdateDto, long id) {
-        User user = new User(
-                id,
-                userUpdateDto.getEmail(),
-                userUpdateDto.getName());
-        return user;
     }
 }
