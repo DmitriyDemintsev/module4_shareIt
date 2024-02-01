@@ -37,7 +37,6 @@ public class UserController {
         userService.deleteUser(id);
     }
 
-
     @GetMapping
     public List<UserDto> getAllUsers() {
         return userMapper.toUserDtoList(userService.getAllUsers());
