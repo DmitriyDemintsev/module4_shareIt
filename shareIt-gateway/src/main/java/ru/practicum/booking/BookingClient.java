@@ -39,10 +39,10 @@ public class BookingClient extends BaseClient {
                 "id", id,
                 "approved", approved
         );
-        return patch("/{id}", userId, parameters);
+        return patch("/{id}", userId, parameters, null);
     }
 
-    //DeleteMapping("/{id}")
+    /* DeleteMapping("/{id}") */
     public ResponseEntity<Object> deleteBooking(@PathVariable("id") long id) {
         return delete("/{id}", id);
     }
