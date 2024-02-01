@@ -26,21 +26,21 @@ public class UserClient extends BaseClient {
 
     //PostMapping
     public ResponseEntity<Object> newUser(UserRequestDto requestDto) {
-        return post("/users", requestDto);
+        return post("", requestDto);
     }
 
     //PatchMapping("/{id}")
     public ResponseEntity<Object> updateUser(UserRequestDto requestDto, long userId) {
-        return patch("/users/{id}", userId, requestDto);
+        return patch("/{id}", userId, requestDto);
     }
 
     //GetMapping
     public ResponseEntity<Object> getUsers() {
-        return get("/users/{id}");
+        return get("/{id}");
     }
 
     //GetMapping("/{id}")
     public ResponseEntity<Object> getUserById(long userId) {
-        return get("/users/{id}", userId);
+        return get("/{id}", userId);
     }
 }
