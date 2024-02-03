@@ -6,9 +6,12 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.client.BaseClient;
 import ru.practicum.user.dto.UserRequestDto;
+
+import java.util.Map;
 
 @Service
 public class UserClient extends BaseClient {
@@ -31,16 +34,24 @@ public class UserClient extends BaseClient {
 
     //PatchMapping("/{id}")
     public ResponseEntity<Object> updateUser(UserRequestDto requestDto, long userId) {
-        return patch("/{id}", userId, requestDto);
+        Map<String, Object> parameters = Map.of("id", userId);
+        return patch("/{id}", userId, parameters, requestDto);
+    }
+
+    /* DeleteMapping("/{id}") */
+    public ResponseEntity<Object> deleteUser(long id) {
+        Map<String, Object> parameters = Map.of("id", id);
+        return delete("/{id}", id, parameters);
     }
 
     //GetMapping
     public ResponseEntity<Object> getUsers() {
-        return get("/{id}");
+        return get("", null, null);
     }
 
     //GetMapping("/{id}")
     public ResponseEntity<Object> getUserById(long userId) {
-        return get("/{id}", userId);
+        Map<String, Object> parameters = Map.of("id", userId);
+        return get("/{id}", userId, parameters);
     }
 }

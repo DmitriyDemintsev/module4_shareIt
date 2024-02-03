@@ -16,6 +16,6 @@ public class ItemDto {
     private String name;
     @NotBlank
     private String description;
-    @NotNull
+//    @NotNull
     private Boolean available;
 }
