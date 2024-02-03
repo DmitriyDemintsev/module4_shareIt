@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.user.dto.UserRequestDto;
 
 import javax.validation.Valid;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/users")
@@ -24,9 +25,14 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> updateUser(@Valid @RequestBody UserRequestDto requestDto,
+    public ResponseEntity<Object> updateUser(@RequestBody UserRequestDto requestDto,
                                              @PathVariable("id") long id) {
         return userClient.updateUser(requestDto, id);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteUser(@PathVariable("id") long id) {
+        return userClient.deleteUser(id);
     }
 
     @GetMapping

@@ -1,6 +1,7 @@
 package ru.practicum.booking;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.practicum.MatchingUtils.isLocalDateTime;
 
 @WebMvcTest(controllers = BookingController.class)
 class BookingControllerTest {
@@ -175,15 +177,15 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", ownerDto.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", is(bookingDto.getId()), Long.class))
-                .andExpect(jsonPath("$[0].start", is(bookingDto.getStart().toString())))
-                .andExpect(jsonPath("$[0].end", is(bookingDto.getEnd().toString())))
+                .andExpect(jsonPath("$[0].start", isLocalDateTime(bookingDto.getStart())))
+                .andExpect(jsonPath("$[0].end", isLocalDateTime(bookingDto.getEnd())))
                 .andExpect(jsonPath("$[0].item.id", is(itemDto.getId()), Long.class))
                 .andExpect(jsonPath("$[0].booker.id", is(bookerDto.getId()), Long.class))
                 .andExpect(jsonPath("$[0].bookerId", is(bookerDto.getId()), Long.class))
                 .andExpect(jsonPath("$[0].status", is(bookingDto.getStatus().toString())))
                 .andExpect(jsonPath("$[1].id", is(bookingDtoForList.getId()), Long.class))
-                .andExpect(jsonPath("$[1].start", is(bookingDtoForList.getStart().toString())))
-                .andExpect(jsonPath("$[1].end", is(bookingDtoForList.getEnd().toString())))
+                .andExpect(jsonPath("$[1].start", isLocalDateTime(bookingDtoForList.getStart())))
+                .andExpect(jsonPath("$[1].end", isLocalDateTime(bookingDtoForList.getEnd())))
                 .andExpect(jsonPath("$[1].item.id", is(itemDto.getId()), Long.class))
                 .andExpect(jsonPath("$[1].booker.id", is(bookerDto.getId()), Long.class))
                 .andExpect(jsonPath("$[1].bookerId", is(bookerDto.getId()), Long.class))

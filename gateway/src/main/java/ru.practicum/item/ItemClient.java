@@ -33,15 +33,15 @@ public class ItemClient extends BaseClient {
     }
 
     //PatchMapping("/{id}")
-    public ResponseEntity<Object> updateItem(long id, ItemDto requestDto, long userId) {
+    public ResponseEntity<Object> updateItem(long userId, ItemDto requestDto, long id) {
         Map<String, Object> parameters = Map.of("id", id);
         return patch("/{id}", userId, parameters, requestDto);
     }
 
     //DeleteMapping("/{itemId}")
-    public ResponseEntity<Object> deleteItem(@PathVariable("itemId") long id) {
-        return delete("/{itemId}", id);
-    }
+    public ResponseEntity<Object> deleteItem(long id) {
+        Map<String, Object> parameters = Map.of("id", id);
+        return delete("/{id}", id, parameters);    }
 
     //GetMapping
     public ResponseEntity<Object> getItems(long userId, Integer from, Integer size) {
@@ -65,6 +65,6 @@ public class ItemClient extends BaseClient {
                 "from", from,
                 "size", size
         );
-        return get("/search?from={from}&size={size}", parameters);
+        return get("/search?text={query}&from={from}&size={size}", null, parameters);
     }
 }

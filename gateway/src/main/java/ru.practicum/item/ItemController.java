@@ -30,14 +30,14 @@ public class ItemController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updateItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                                             @Valid @RequestBody ItemDto requestDto,
+                                             @RequestBody ItemDto requestDto,
                                              @PathVariable("id") long id) {
         return itemClient.updateItem(userId, requestDto, id);
     }
 
     @DeleteMapping("/{itemId}")
-    public void deleteItem(@PathVariable("itemId") long itemId) {
-        itemClient.deleteItem(itemId);
+    public ResponseEntity<Object>  deleteItem(@PathVariable("itemId") long itemId) {
+        return itemClient.deleteItem(itemId);
     }
 
     @GetMapping
@@ -56,7 +56,7 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> getSearchItem(@NotBlank @RequestParam("text") String query,
+    public ResponseEntity<Object> getSearchItem(@RequestParam("text") String query,
                                                 @PositiveOrZero @RequestParam(value = "from",
                                                         defaultValue = "0") int from,
                                                 @Positive @RequestParam(value = "size", defaultValue = "10") int size) {
