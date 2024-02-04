@@ -48,6 +48,9 @@ public class ItemRequestController {
                                        @RequestParam(value = "from", defaultValue = "0") int from,
                                        @RequestParam(value = "size", defaultValue = "10") int size) {
         userService.getUserById(userId);
+        if (size == 0) {
+            throw new ItemRequestValidationException("размер не может быть нулём");
+        }
         List<ItemRequestDto> itemRequestDtos = itemRequestMapper
                 .toItemRequestDtoList(itemRequestService.getAllRequest(userId, from, size));
         for (ItemRequestDto itemRequestDto : itemRequestDtos) {
