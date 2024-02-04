@@ -3,7 +3,6 @@ package ru.practicum.request;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.exception.ItemRequestValidationException;
 import ru.practicum.item.ItemService;
 import ru.practicum.item.dto.ItemMapper;
 import ru.practicum.item.model.Item;
@@ -48,9 +47,6 @@ public class ItemRequestController {
                                        @RequestParam(value = "from", defaultValue = "0") int from,
                                        @RequestParam(value = "size", defaultValue = "10") int size) {
         userService.getUserById(userId);
-        if (size == 0) {
-            throw new ItemRequestValidationException("размер не может быть нулём");
-        }
         List<ItemRequestDto> itemRequestDtos = itemRequestMapper
                 .toItemRequestDtoList(itemRequestService.getAllRequest(userId, from, size));
         for (ItemRequestDto itemRequestDto : itemRequestDtos) {

@@ -27,7 +27,7 @@ public class CommentClient extends BaseClient {
         );
     }
 
-    //PostMapping
+    /* PostMapping */
     public ResponseEntity<Object> addComment(long userId, long itemId, CommentDto requestDto) {
         Map<String, Object> parameters = Map.of("itemId", itemId);
         return post("/{itemId}/comment", userId, parameters, requestDto);

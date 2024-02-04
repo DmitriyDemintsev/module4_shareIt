@@ -41,7 +41,7 @@ public class BookingController {
         return bookingClient.deleteBooking(id);
     }
 
-    /*бронирования конкретного юзера вклдчая статус*/
+    /* бронирования конкретного юзера вклдчая статус */
     @GetMapping
     public ResponseEntity<Object> getBookings(@RequestHeader("X-Sharer-User-Id") long userId,
                                               @RequestParam(value = "state",
@@ -61,7 +61,7 @@ public class BookingController {
         return bookingClient.getBookings(userId, state, from, size);
     }
 
-    /*конкретное бронирование, включая статус*/
+    /* конкретное бронирование, включая статус */
     @GetMapping("/{bookingId}")
     public ResponseEntity<Object> getBooking(@RequestHeader("X-Sharer-User-Id") long userId,
                                              @PathVariable Long bookingId) {
@@ -69,7 +69,7 @@ public class BookingController {
         return bookingClient.getBooking(userId, bookingId);
     }
 
-    /*лист бронирования всех item текущего пользователя*/
+    /* лист бронирования всех item текущего пользователя */
     @GetMapping("/owner")
     public ResponseEntity<Object> getBookingsAllItemsForUser(@RequestHeader("X-Sharer-User-Id") long userId,
                                                              @RequestParam(value = "state",
@@ -85,7 +85,6 @@ public class BookingController {
                     new ErrorResponse("Unknown state: " + stateParam)
             );
         }
-//                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
         log.info("Get booking with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
         return bookingClient.getBookingsForUser(userId, state, from, size);
     }

@@ -2,9 +2,7 @@ package ru.practicum.item.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.practicum.item.model.Item;
 import ru.practicum.user.dto.UserDto;
-import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
 

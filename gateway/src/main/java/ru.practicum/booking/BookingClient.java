@@ -27,7 +27,7 @@ public class BookingClient extends BaseClient {
         );
     }
 
-    //PostMapping
+    /* PostMapping */
     public ResponseEntity<Object> bookItem(long userId, BookItemRequestDto requestDto) {
         return post("", userId, requestDto);
     }
@@ -47,7 +47,7 @@ public class BookingClient extends BaseClient {
         return delete("/{id}", id, parameters);
     }
 
-    /*GetMapping - бронирования конкретного юзера вклдчая статус*/
+    /* GetMapping - бронирования конкретного юзера вклдчая статус */
     public ResponseEntity<Object> getBookings(long userId, BookingState state, Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
                 "state", state.name(),
@@ -57,13 +57,13 @@ public class BookingClient extends BaseClient {
         return get("?state={state}&from={from}&size={size}", userId, parameters);
     }
 
-    /*GetMapping("/{id}") - конкретное бронирование, включая статус*/
+    /* GetMapping("/{id}") - конкретное бронирование, включая статус */
     public ResponseEntity<Object> getBooking(long userId, Long bookingId) {
         Map<String, Object> parameters = Map.of("id", bookingId);
         return get("/{id}", userId, parameters);
     }
 
-    /*GetMapping("/owner") - лист бронирования всех item текущего пользователя*/
+    /* GetMapping("/owner") - лист бронирования всех item текущего пользователя */
     public ResponseEntity<Object> getBookingsForUser(long userId, BookingState state, Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
                 "state", state.name(),

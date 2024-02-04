@@ -19,6 +19,7 @@ public class User {
     private String name; //имя или логин
     @Column(nullable = false)
     private String email;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
