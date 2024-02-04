@@ -6,7 +6,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.client.BaseClient;
 import ru.practicum.item.dto.ItemDto;
@@ -41,7 +40,7 @@ public class ItemClient extends BaseClient {
     //DeleteMapping("/{itemId}")
     public ResponseEntity<Object> deleteItem(long id) {
         Map<String, Object> parameters = Map.of("id", id);
-        return delete("/{id}", id, parameters);    }
+        return delete("/{itemId}", id, parameters);    }
 
     //GetMapping
     public ResponseEntity<Object> getItems(long userId, Integer from, Integer size) {

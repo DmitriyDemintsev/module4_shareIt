@@ -31,6 +31,12 @@ public class ItemController {
     public List<ItemDto> getItems(@RequestHeader("X-Sharer-User-Id") long userId,
                                   @RequestParam(value = "from", defaultValue = "0") int from,
                                   @RequestParam(value = "size", defaultValue = "10") int size) {
+        if (from < 0) {
+            throw new ItemRequestValidationException("Индекс не может быть отрицательным числом");
+        }
+        if (size == 0) {
+            throw new ItemRequestValidationException("размер не может быть нулём");
+        }
         List<ItemDto> itemDtos = itemMapper.toItemDtoList(itemService.getItems(userId, from, size));
         for (ItemDto itemDto : itemDtos) {
             addComment(itemDto);
@@ -56,6 +62,12 @@ public class ItemController {
     public List<ItemDto> getSearchItem(@RequestParam("text") String query,
                                        @RequestParam(value = "from", defaultValue = "0") int from,
                                        @RequestParam(value = "size", defaultValue = "10") int size) {
+        if (from < 0) {
+            throw new ItemRequestValidationException("Индекс не может быть отрицательным числом");
+        }
+        if (size == 0) {
+            throw new ItemRequestValidationException("Размер не может быть нулём");
+        }
         return itemMapper.toItemDtoList(itemService.getItemsBySearch(query, from, size));
     }
 

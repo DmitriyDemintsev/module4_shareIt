@@ -35,6 +35,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.practicum.MatchingUtils.isLocalDateTime;
 
 @WebMvcTest(controllers = ItemRequestController.class)
 class ItemRequestControllerTest {
@@ -106,7 +107,7 @@ class ItemRequestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(createdRequestDto.getId()), Long.class))
                 .andExpect(jsonPath("$.description", is(createdRequestDto.getDescription())))
-                .andExpect(jsonPath("$.created", is(createdRequestDto.getCreated().toString())))
+                .andExpect(jsonPath("$.created", isLocalDateTime(createdRequestDto.getCreated())))
                 .andExpect(jsonPath("$.items", is(createdRequestDto.getItems())));
     }
 
@@ -121,11 +122,11 @@ class ItemRequestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", is(requestDto.getId()), Long.class))
                 .andExpect(jsonPath("$[0].description", is(requestDto.getDescription())))
-                .andExpect(jsonPath("$[0].created", is(requestDto.getCreated().toString())))
+                .andExpect(jsonPath("$[0].created", isLocalDateTime(requestDto.getCreated())))
                 .andExpect(jsonPath("$[0].items", is(requestDto.getItems())))
                 .andExpect(jsonPath("$[1].id", is(requestDtoForList.getId()), Long.class))
                 .andExpect(jsonPath("$[1].description", is(requestDtoForList.getDescription())))
-                .andExpect(jsonPath("$[1].created", is(requestDtoForList.getCreated().toString())))
+                .andExpect(jsonPath("$[1].created", isLocalDateTime(requestDtoForList.getCreated())))
                 .andExpect(jsonPath("$[1].items", is(requestDtoForList.getItems())));
     }
 
@@ -140,11 +141,11 @@ class ItemRequestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", is(requestDtoOne.getId()), Long.class))
                 .andExpect(jsonPath("$[0].description", is(requestDtoOne.getDescription())))
-                .andExpect(jsonPath("$[0].created", is(requestDtoOne.getCreated().toString())))
+                .andExpect(jsonPath("$[0].created", isLocalDateTime(requestDtoOne.getCreated())))
                 .andExpect(jsonPath("$[0].items", is(requestDtoOne.getItems())))
                 .andExpect(jsonPath("$[1].id", is(requestDtoTwo.getId()), Long.class))
                 .andExpect(jsonPath("$[1].description", is(requestDtoTwo.getDescription())))
-                .andExpect(jsonPath("$[1].created", is(requestDtoTwo.getCreated().toString())))
+                .andExpect(jsonPath("$[1].created", isLocalDateTime(requestDtoTwo.getCreated())))
                 .andExpect(jsonPath("$[1].items", is(requestDtoTwo.getItems())));
     }
 
@@ -158,7 +159,7 @@ class ItemRequestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(requestDto.getId()), Long.class))
                 .andExpect(jsonPath("$.description", is(requestDto.getDescription())))
-                .andExpect(jsonPath("$.created", is(requestDto.getCreated().toString())))
+                .andExpect(jsonPath("$.created", isLocalDateTime(requestDto.getCreated())))
                 .andExpect(jsonPath("$.items", is(requestDto.getItems())));
     }
 }

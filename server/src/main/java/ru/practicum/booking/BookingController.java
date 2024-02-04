@@ -48,6 +48,12 @@ public class BookingController {
                                                   @RequestParam(value = "state", defaultValue = "ALL") String state,
                                                   @RequestParam(value = "from", defaultValue = "0") int from,
                                                   @RequestParam(value = "size", defaultValue = "10") int size) {
+        if (from < 0) {
+            throw new BookingValidationException("Индекс не может быть отрицательным числом");
+        }
+        if (size == 0) {
+            throw new BookingValidationException("Размер не может быть нулём");
+        }
         return bookingMapper.toBookingDtoList(bookingService.getAllBookings(userId,
                 bookingMapper.toStatus(state), from, size));
     }
@@ -57,6 +63,13 @@ public class BookingController {
                                                        @RequestParam(value = "state", defaultValue = "ALL") String state,
                                                        @RequestParam(value = "from", defaultValue = "0") int from,
                                                        @RequestParam(value = "size", defaultValue = "10") int size) {
+        if (from < 0) {
+            throw new BookingValidationException("индекс не может быть отрицательным числом");
+        }
+        if (size == 0) {
+            throw new ItemRequestValidationException("размер не может быть нулём");
+        }
+
         return bookingMapper.toBookingDtoList(bookingService.getBookingsAllItemsForUser(userId,
                 bookingMapper.toStatus(state), from, size));
     }

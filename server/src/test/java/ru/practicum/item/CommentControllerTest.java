@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.practicum.MatchingUtils.isLocalDateTime;
 
 @WebMvcTest(controllers = CommentController.class)
 class CommentControllerTest {
@@ -70,6 +71,6 @@ class CommentControllerTest {
                 .andExpect(jsonPath("$.item.id", is(itemDto.getId()), Long.class))
                 .andExpect(jsonPath("$.author.id", is(authorDto.getId()), Long.class))
                 .andExpect(jsonPath("$.authorName", is(commentDto.getAuthorName())))
-                .andExpect(jsonPath("$.created", is(commentDto.getCreated().toString())));
+                .andExpect(jsonPath("$.created", isLocalDateTime(commentDto.getCreated())));
     }
 }

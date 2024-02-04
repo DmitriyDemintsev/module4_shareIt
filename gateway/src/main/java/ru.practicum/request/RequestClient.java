@@ -42,12 +42,12 @@ public class RequestClient extends BaseClient {
                 "from", from,
                 "size", size
         );
-        return get("?from={from}&size={size}", userId, parameters);
+        return get("/all?from={from}&size={size}", userId, parameters);
     }
 
     //GetMapping("/{requestId}")
     public ResponseEntity<Object> getItemRequestById(long userId, Long requestId) {
-        Map<String, Object> parameters = Map.of("id", requestId);
+        Map<String, Object> parameters = Map.of("requestId", requestId);
         return get("/{requestId}", userId, parameters);
     }
 }

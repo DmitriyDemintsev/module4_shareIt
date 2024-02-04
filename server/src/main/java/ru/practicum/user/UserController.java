@@ -18,9 +18,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-
     private final UserService userService;
     private final UserMapper userMapper;
+
+    @GetMapping
+    public List<UserDto> getAllUsers() {
+        return userMapper.toUserDtoList(userService.getAllUsers());
+    }
 
     @PostMapping
     public UserDto createUser(@Valid @RequestBody UserDto userDto) {
@@ -36,11 +40,6 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable("id") long id) {
         userService.deleteUser(id);
-    }
-
-    @GetMapping
-    public List<UserDto> getAllUsers() {
-        return userMapper.toUserDtoList(userService.getAllUsers());
     }
 
     @GetMapping("/{id}")

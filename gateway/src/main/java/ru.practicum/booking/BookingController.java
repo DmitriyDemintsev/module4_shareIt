@@ -83,7 +83,7 @@ public class BookingController {
         if (state == null) {
             return ResponseEntity.badRequest().body(
                     new ErrorResponse("Unknown state: " + stateParam)
-            ); //не работает
+            );
         }
 //                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
         log.info("Get booking with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
