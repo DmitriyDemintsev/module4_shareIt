@@ -26,17 +26,17 @@ public class RequestClient extends BaseClient {
         );
     }
 
-    //PostMapping
+    /* PostMapping */
     public ResponseEntity<Object> itemRequest(long userId, ItemRequestDto requestDto) {
         return post("", userId, requestDto);
     }
 
-    //GetMapping
+    /* GetMapping */
     public ResponseEntity<Object> getMineRequests(long userId) {
         return get("", userId);
     }
 
-    //GetMapping("/all")
+    /* GetMapping("/all") */
     public ResponseEntity<Object> getAll(long userId, Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
                 "from", from,
@@ -45,7 +45,7 @@ public class RequestClient extends BaseClient {
         return get("/all?from={from}&size={size}", userId, parameters);
     }
 
-    //GetMapping("/{requestId}")
+    /* GetMapping("/{requestId}") */
     public ResponseEntity<Object> getItemRequestById(long userId, Long requestId) {
         Map<String, Object> parameters = Map.of("requestId", requestId);
         return get("/{requestId}", userId, parameters);

@@ -18,6 +18,3 @@ public class ItemRequestDto implements Serializable {
     private LocalDateTime created; //дата и время создания запроса
     private List<ItemDto> items;
 }
-
-
-// @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")

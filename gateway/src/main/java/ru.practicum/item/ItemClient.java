@@ -26,23 +26,23 @@ public class ItemClient extends BaseClient {
         );
     }
 
-    //PostMapping
+    /* PostMapping */
     public ResponseEntity<Object> addItem(long userId, ItemDto requestDto) {
         return post("", userId, requestDto);
     }
 
-    //PatchMapping("/{id}")
+    /* PatchMapping("/{id}") */
     public ResponseEntity<Object> updateItem(long userId, ItemDto requestDto, long id) {
         Map<String, Object> parameters = Map.of("id", id);
         return patch("/{id}", userId, parameters, requestDto);
     }
 
-    //DeleteMapping("/{itemId}")
+    /* DeleteMapping("/{itemId}") */
     public ResponseEntity<Object> deleteItem(long id) {
         Map<String, Object> parameters = Map.of("id", id);
         return delete("/{itemId}", id, parameters);    }
 
-    //GetMapping
+    /* GetMapping */
     public ResponseEntity<Object> getItems(long userId, Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
                 "from", from,
@@ -51,13 +51,13 @@ public class ItemClient extends BaseClient {
         return get("?from={from}&size={size}", userId, parameters);
     }
 
-    //GetMapping("/{id}")
+    /* GetMapping("/{id}") */
     public ResponseEntity<Object> getItemById(long userId, Long id) {
         Map<String, Object> parameters = Map.of("id", id);
         return get("/{id}", userId, parameters);
     }
 
-    //GetMapping("/{search}")
+    /* GetMapping("/{search}") */
     public ResponseEntity<Object> getSearchItem(String query, Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
                 "query", query,
